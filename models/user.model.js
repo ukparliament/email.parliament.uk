@@ -5,7 +5,7 @@ const crypto    = require('crypto'),
 const user = {
   async authenticate(id) {
     try {
-      const account = await mailchimp.get(`/lists/${process.env.MC_LIST_ID}/members?unique_email_id=${id}&fields=total_items,members.email_address,members.id,members.unique_email_id`);
+      const account = await mailchimp.get(`/lists/${process.env.MC_LIST_ID}/members?unique_email_id=${id}&fields=total_items,members.email_address,members.id,members.unique_email_id,members.merge_fields`);
       if(account.total_items === 1) {
         return Promise.resolve(account.members.find(val => val.unique_email_id === id));
       }
@@ -16,11 +16,22 @@ const user = {
 
     return Promise.reject('User does not exist');
   },
-  create(email) {
-    return mailchimp.post(`/lists/${process.env.MC_LIST_ID}/members`, {
-      email_address: email,
-      status: 'pending' // With status set to `pending`, it sends a double opt-in confirmation email to the address
-    });
+  async checkIfExists(email) {
+    try {
+      const account = await this.read(email);
+      return Promise.resolve(account);
+    }
+    catch(error) {
+      if(error.status === 404) {
+        return Promise.reject('User does not exist.');
+      }
+      return Promise.reject(error);
+    }
+  },
+  create(userObject) {
+    // With `status` and `status_if_new` set to `pending`, it sends a double opt-in confirmation email to the address
+    userObject = Object.assign(userObject, { status_if_new: 'pending', status: 'pending' });
+    return mailchimp.put(`/lists/${process.env.MC_LIST_ID}/members/${crypto.createHash('md5').update(userObject.email_address).digest('hex')}`, userObject);
   },
   read(email) {
     return mailchimp.get(`/lists/${process.env.MC_LIST_ID}/members/${crypto.createHash('md5').update(email).digest('hex')}`);

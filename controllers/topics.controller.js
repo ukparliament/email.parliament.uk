@@ -2,7 +2,7 @@ const topics = require('../models/topics.model.js'),
       user   = require('../models/user.model.js');
 
 const controller = {
-  update(req, res) {
+  async update(req, res) {
     const redirect = req.params.type ? '/topics/subscribed' : '/topics';
     const subscribingTo = req.params.type ? false : true;
     let userObject = {
@@ -10,7 +10,7 @@ const controller = {
     };
 
     if('merge_fields' in req.body) {
-      userObject.merge_fields = topics.convertMergeFieldsToObject(req.body.merge_fields, subscribingTo);
+      userObject.merge_fields = await topics.convertMergeFieldsToObject(userObject.email_address, req.body.merge_fields, subscribingTo);
     }
 
     if('interests' in req.body) {

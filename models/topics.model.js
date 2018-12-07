@@ -4,10 +4,49 @@ const MailChimp = require('mailchimp-api-v3'),
       user = require('../models/user.model.js');
 
 const topics = {
-  convertMergeFieldsToObject(merge_fields, subscribeTo) {
-    return {
-      AEID: merge_fields.join(',')
-    };
+  async convertMergeFieldsToObject(email, merge_fields, subscribeTo) {
+    const mergeFieldsObject = {};
+    let subscribedAeids = (subscribeTo && subscribeTo !== 'pending') ? merge_fields : [];
+    let pendingAeids = (subscribeTo === 'pending') ? merge_fields : [];
+    let unsubscribeAeids = (!subscribeTo) ? merge_fields : [];
+
+    try {
+      let existingUser = await user.checkIfExists(email);
+
+      for(let existingMergeKey in existingUser.merge_fields) {
+        if(existingMergeKey.startsWith('AEID') && !existingMergeKey.startsWith('AEID_PEND')) {
+          subscribedAeids = subscribedAeids.concat(existingUser.merge_fields[existingMergeKey].split(',').filter(val => val));
+        }
+        if(existingMergeKey.startsWith('AEID_PEND')) {
+          pendingAeids = pendingAeids.concat(existingUser.merge_fields[existingMergeKey].split(',').filter(val => val));
+        }
+      }
+
+      let count = 0;
+      while(subscribedAeids.length > 0) {
+        let newKey = `AEID_${count}`;
+        mergeFieldsObject[newKey] = mergeFieldsObject[newKey] || [];
+
+        const concatted = mergeFieldsObject[newKey].concat(subscribedAeids.slice(0, 1));
+
+        if(concatted.join(',').length > 255) {
+          count = count + 1;
+        } else {
+          mergeFieldsObject[newKey] = mergeFieldsObject[newKey].concat(subscribedAeids.splice(0, 1));
+        }
+      }
+
+    }
+    catch(error) {
+      console.log('Error finding user:', error);
+    }
+
+    mergeFieldsObject.AEID_PEND = (subscribeTo === 'switch') ? [] : pendingAeids;
+    for(let key in mergeFieldsObject) {
+      mergeFieldsObject[key] = mergeFieldsObject[key].filter(val => !unsubscribeAeids.includes(val)).join(',');
+    }
+
+    return mergeFieldsObject;
   },
   convertInterestsArrayToObject(interests, subscribeTo) {
     const object = {};
@@ -38,6 +77,10 @@ const topics = {
   },
   getCachedTopics() {
     return this.cachedTopics;
+  },
+  async getTopicById(topic_id) {
+    const allTopics = await this.getTopics();
+    return this.flattenTopics(allTopics).find(val => val.id === topic_id);
   },
   async getTopics() {
     const yesterday = new Date();
@@ -132,7 +175,7 @@ const topics = {
 
     let allMergeFields = [];
     for(const key in preferences.merge_fields) {
-      if(key.startsWith('AEID')) {
+      if(key.startsWith('AEID') && !key.startsWith('AEID_PEND')) {
         allMergeFields = allMergeFields.concat(preferences.merge_fields[key].split(',').filter(val => val));
       }
     }

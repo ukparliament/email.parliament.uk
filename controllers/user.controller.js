@@ -1,14 +1,24 @@
-const user = require('../models/user.model.js');
-const { validationResult } = require('express-validator/check');
+const topics = require('../models/topics.model.js'),
+      user = require('../models/user.model.js'),
+      { validationResult } = require('express-validator/check');
 
 const controller = {
-  index(req, res) {
-    return res.render('index', { PAGE_TITLE: 'Email subscriptions' });
+  async index(req, res) {
+    let topic;
+
+    if(req.query.topic_id) {
+      topic = await topics.getTopicById(req.query.topic_id);
+    }
+
+    return res.render('index', { PAGE_TITLE: 'Email subscriptions', TOPIC: topic || null });
   },
   async handleForm(req, res) {
     let redirect = '/';
-    const { email } = req.body;
+    const { email, merge_fields } = req.body;
     const errors = validationResult(req);
+    const userObject = {
+      email_address: email
+    };
 
     if(!errors.isEmpty()) {
       req.session.errors = errors.array().map(message => message.msg);
@@ -17,7 +27,8 @@ const controller = {
 
     try {
       req.session.email = email;
-      await user.create(email);
+      merge_fields ? userObject.merge_fields = await topics.convertMergeFieldsToObject(email, merge_fields, 'pending') : null;
+      await user.create(userObject);
       redirect = '/thanks';
     }
     catch(e) {
@@ -39,6 +50,12 @@ const controller = {
     try {
       const account = await user.authenticate(req.query.id);
       req.session.user = account;
+
+      if(account.merge_fields.hasOwnProperty('AEID_PEND') && account.merge_fields.AEID_PEND) {
+        account.merge_fields = await topics.convertMergeFieldsToObject(account.email_address, account.merge_fields.AEID_PEND.split(','), 'switch');
+        await user.update(account);
+      }
+
     }
     catch(e) {
       console.log('Error on authentication', JSON.stringify(e)); // For CloudWatch debugging

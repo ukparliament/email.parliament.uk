@@ -22,7 +22,7 @@ block content
                   .list--details
                     .input-group__verbose
                       if val.aeid
-                        input(type='checkbox', value=val.id, name="merge_field[]", id=val.id)
+                        input(type='checkbox', value=val.id, name="merge_fields[]", id=val.id)
                       else
                         input(type='checkbox', value=val.id, name="interests[]", id=val.id)
                       label(for=val.id)= val.title

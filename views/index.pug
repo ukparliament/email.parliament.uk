@@ -6,6 +6,11 @@ block content
       h1 Keep up to date
       p.lead Get email updates about the work of Parliament that matters most to you. Be the first to know what's happening and how you can get involved.
       p We will only send you emails about the topics you’ve signed up for. You can unsubscribe at any time.
+      if TOPIC
+        .status--highlight.theme--mint--light You are signing up to
+          = ' '
+          strong #{TOPIC.title}
+          = ' updates.'
       form(action='', method='post')
         label(for='email')
           strong Email address
@@ -13,6 +18,8 @@ block content
           for error in sessionErrors
             p.message--error #{error}
         input#email(type='text', name='email', required, autocapitalize='off' autocorrect='off')
+        if TOPIC
+          input(type='hidden', value=TOPIC.id, name="merge_fields[]", id=TOPIC.id)
         button.btn--primary(type='submit') Sign up
       p
         a(href='https://www.parliament.uk/site-information/data-protection/uk-parliament-email-privacy-policy/') View our privacy policy
