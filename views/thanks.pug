@@ -1,0 +1,20 @@
+extends layouts/master.pug
+
+block content
+  #content.section--primary(tabindex='0')
+    .container
+      .block--border__bottom
+        h1 Confirm your email address
+          span.context Email subscriptions
+        p.lead We've just sent an email to
+          = ' '
+          strong #{session.email}
+          = '. Click the link in the email to confirm your subscription.'
+      p If you've entered the wrong email address
+        = ' '
+        a(href='/') go back and type it again
+        = '.'
+      p If you've not received the confirmation email, please check your spam folder. If you still have not received an email,
+        = ' '
+        a(href='mailto:digitalsupportdesk@parliament.uk?subject=Mail Service - Subscription Centre') contact support
+        = '.'

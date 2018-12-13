@@ -1,0 +1,32 @@
+extends ../layouts/master.pug
+include ../mixins/tabs.pug
+
+block content
+  #content.section--primary(tabindex='0')
+    .container
+      h1 Your subscriptions
+        span.context Email subscriptions
+        span.context Change the email updates you get from us.
+  +tabs('subscribed', USER_SUBSCRIPTIONS_COUNT)
+  if messages.length
+    .section--wide
+      .container
+        .status--highlight.theme--mint--light #{messages}
+  section.section--wide
+    .container.flex
+      if TOPICS.length
+        form(action='', method='post')
+          button(type="submit").btn--primary Unsubscribe
+          fieldset
+            ol.list--block
+              each val in TOPICS
+                li
+                  .list--details
+                    .input-group__verbose
+                      if val.aeid
+                        input(type='checkbox', value=val.id, name="merge_fields[]", id=val.id)
+                      else
+                        input(type='checkbox', value=val.id, name="interests[]", id=val.id)
+                      label(for=val.id)= val.title
+      else
+        p You're not subscribed to any emails.

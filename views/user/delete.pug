@@ -1,0 +1,16 @@
+extends ../layouts/master.pug
+
+block content
+  #content.section--primary(tabindex='0')
+    .container
+      .block--border__bottom
+        h1 Delete my details
+          span.context Email subscriptions
+        p If you delete your details you will have to sign up again to get our email updates.
+        form(action='', method='post')
+          button.btn--primary(type='submit') Yes, delete my details
+    .container
+      p If you've changed your mind or clicked this by mistake, go back to
+        = ' '
+        a(href='/topics') email subscriptions
+        = '.'

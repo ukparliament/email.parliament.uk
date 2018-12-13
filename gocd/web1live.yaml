@@ -1,0 +1,51 @@
+pipelines:
+  parliament.uk-email:
+    group: Main
+    label_template: "${COUNT}"
+    environment_variables:
+      NODE_ENV: production
+    materials:
+      parliament.uk-email-git:
+        git: https://github.com/ukparliament/email.parliament.uk.git
+        branch: development
+        auto_update: true
+    stages:
+      - build:
+          approval: manual
+          jobs:
+            build:
+              tasks:
+                - exec:
+                    run_if: passed
+                    command: make
+                    arguments:
+                      - checkout_to_release
+                - exec:
+                    run_if: passed
+                    command: make
+                    arguments:
+                      - build
+                - exec:
+                    run_if: passed
+                    command: make
+                    arguments:
+                      - push
+                - exec:
+                    run_if: any
+                    command: make
+                    arguments:
+                      - rmi
+      - deploy:
+          jobs:
+            build:
+              tasks:
+                - exec:
+                    run_if: passed
+                    command: make
+                    arguments:
+                      - deploy-ecs
+
+environments:
+  Web.LIVE:
+    pipelines:
+      - parliament.uk-email

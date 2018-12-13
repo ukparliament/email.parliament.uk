@@ -1,0 +1,65 @@
+@import '../../node_modules/parliamentuk-pugin/src/stylesheets/objects/_grid-settings.scss';
+@import '../../node_modules/parliamentuk-pugin/src/stylesheets/settings/colours.scss';
+@import '../../node_modules/parliamentuk-pugin/src/stylesheets/settings/spacing.scss';
+@import '../../node_modules/parliamentuk-pugin/src/stylesheets/settings/mixins.scss';
+
+@include media($medium) {
+  .flex {
+    display: flex;
+    &--1-4 {
+      flex: 0 0 auto;
+      width: calc(30% - #{$base-spacing-unit-extra-large});
+      margin-right: $base-spacing-unit-extra-large;
+    }
+    &--3-4 {
+      flex: 0 0 auto;
+      width: 70%;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-bottom: $base-spacing-unit-small;
+      padding-top: $base-spacing-unit-small;
+      background: $grey-5;
+    }
+    &-justify {
+      justify-content: space-between;
+      align-items: center;
+      button {
+        margin: 0;
+      }
+    }
+  }
+}
+
+
+.categories {
+  @include media($medium) {
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+  }
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: $base-spacing-unit-small;
+    padding-top: $base-spacing-unit-small;
+    background: $grey-5;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+      a {
+        display: block;
+        padding: $base-spacing-unit $base-spacing-unit-tiny;
+        margin-bottom: 1px;
+        &.active {
+          background: $grey-4;
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,19 @@
+mixin tabs(active, count = 0)
+  section.section--wide
+    .container
+      ul.list--tab
+        if active == 'subscribed'
+          li.active Your subscriptions (#{count})
+        else
+          li
+            a(href='/topics/subscribed') Your subscriptions (#{count})
+        if active == 'all'
+          li.active All subscriptions
+        else
+          li
+            a(href='/topics') All subscriptions
+        if active == 'user_details'
+          li.active Your details
+        else
+          li
+            a(href='/user') Your details

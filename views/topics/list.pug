@@ -1,0 +1,54 @@
+extends ../layouts/master.pug
+include ../mixins/tabs.pug
+
+block content
+  #content.section--primary(tabindex='0')
+    .container
+      h1 All subscriptions
+        span.context Email subscriptions
+        span.context Choose the email updates you get from us.
+  +tabs('all', USER_SUBSCRIPTIONS_COUNT)
+  if messages.length
+    .section--wide
+      .container
+        .status--highlight.theme--mint--light #{messages}
+  section.section--wide
+    .container.flex
+      .flex--1-4.categories
+        h2 Categories
+        ul
+          each val in TOPICS.editorial
+            if val.items.length
+              li
+                a(href='#' + val.id)= val.title
+          each val in TOPICS.automated
+            if val.items.length
+              li
+                a(href='#' + val.id)= val.title
+      .flex--3-4
+        form(action='', method='post')
+          each val in TOPICS.editorial
+            if val.items.length
+              h2(id=`${val.id}`)= val.title
+              fieldset
+                ol.list--block
+                  each topic in val.items
+                    li
+                      .list--details
+                        .input-group__verbose
+                          input(type='checkbox', value=topic.id, name="interests[]", id=topic.id)
+                          label(for=topic.id)= topic.title
+              button(type='submit').btn--primary Save changes
+          each val in TOPICS.automated
+            if val.items.length
+              h2(id=`${val.id}`)= val.title
+              fieldset
+                ol.list--block
+                  each topic in val.items
+                    li
+                      .list--details
+                        .input-group__verbose
+                          input(type='checkbox', value=topic.id, name="merge_fields[]", id=topic.id)
+                          label(for=topic.id)= topic.title
+                        p= topic.description
+                button(type='submit').btn--primary Save changes

@@ -1,0 +1,37 @@
+doctype html
+html(lang='en')
+  head
+    title
+      if PAGE_TITLE
+        =PAGE_TITLE + ' - ' + SITE_TITLE
+      else
+        =SITE_TITLE
+    meta(content='IE=edge', http-equiv='X-UA-Compatible')
+    meta(content='width=device-width, initial-scale=1.0', name='viewport')
+    link(href='https://static.parliament.uk/assets-public/favicon.ico', rel='shortcut icon', type='image/x-icon')
+    link(href=`https://static.parliament.uk/pugin/${PUGIN_VERSION}/stylesheets/main.css`, rel='stylesheet')
+    link(href='/_css/overrides.css', rel='stylesheet')
+    script.
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-5P3ZKKS');
+  body
+    noscript
+      iframe(src='https://www.googletagmanager.com/ns.html?id=GTM-5P3ZKKS', width='0', height='0', style='display:none;visibility:hidden')
+    include ../../node_modules/parliamentuk-pugin/src/components/microsite-masthead.pug
+    header
+      .container
+        a.uk_parliament(href='/', aria-label='UK Parliament')
+          include ../../node_modules/parliamentuk-pugin/src/icons/uk-parliament.svg
+    main
+      block content
+    footer
+      .container
+        h2.logo UK Parliament
+        ul.list
+          li
+            a(href='https://beta.parliament.uk/meta/cookie-policy') Cookie Policy
+          li
+            a(href='https://beta.parliament.uk/articles/8M7cA51O') Email privacy policy

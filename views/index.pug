@@ -1,0 +1,22 @@
+extends layouts/master.pug
+
+block content
+  #content.section--primary(tabindex='0')
+    .container
+      h1 Keep up to date
+        span.context Email subscriptions
+      p Get email updates about the work of Parliament that matters to you. Be the first to know what's happening and how you can get involved.
+      p We'll only send you emails about the topics you’ve signed up for. You can unsubscribe at any time.
+      if TOPIC
+        .status--highlight.theme--mint--light You're signing up to #{TOPIC.title} updates.
+      form(action='', method='post')
+        label(for='email') Email
+        if sessionErrors
+          for error in sessionErrors
+            p.message--error #{error}
+        input#email(type='text', name='email', required, autocapitalize='off' autocorrect='off')
+        if TOPIC
+          input(type='hidden', value=TOPIC.id, name="merge_fields[]", id=TOPIC.id)
+        button.btn--primary(type='submit') Sign up
+      p
+        a(href='https://beta.parliament.uk/articles/8M7cA51O') Email privacy policy

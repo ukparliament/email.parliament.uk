@@ -1,0 +1,26 @@
+extends ../layouts/master.pug
+include ../mixins/tabs.pug
+
+block content
+  #content.section--primary(tabindex='0')
+    .container
+      h1 Your details
+        span.context Email subscriptions
+        span.context Manage your email address and personal information.
+  +tabs('user_details', USER_SUBSCRIPTIONS_COUNT)
+  section.section--wide
+    .container
+      .block--border__bottom
+        if messages.length
+          .status--highlight.theme--grey-4 #{messages}
+        form(action='', method='post')
+          fieldset
+            label(for='email') Email
+            if sessionErrors
+              for error in sessionErrors
+                p.message--error #{error.message}
+            input#email(type='email', name='email', required, autocapitalize='off' autocorrect='off', value=USER.email_address)
+          button.btn--primary(type='submit') Change email
+      .block--border__bottom
+        p Would you like to delete your details from our system?
+        a.btn--ghost--primary(href='/user/delete') Yes, delete my details
