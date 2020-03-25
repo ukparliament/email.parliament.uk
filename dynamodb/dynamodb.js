@@ -59,11 +59,12 @@ const dynamodb = {
           title: 'MPs\' and Lords\' accountability',
           items: formatted.filter(val => val.type == 'accountability').sort(helpers.sortAlphabetically)
         },
-        {
-          id: 'committee',
-          title: 'Committee updates',
-          items: formatted.filter(val => val.type == 'committee').sort(helpers.sortAlphabetically),
-        },
+        // Skip mapping the committee topic
+        //{
+        //  id: 'committee',
+        //  title: 'Committee updates',
+        //  items: formatted.filter(val => val.type == 'committee').sort(helpers.sortAlphabetically),
+        //},
         {
           id: 'bill',
           title: 'Bill updates',
