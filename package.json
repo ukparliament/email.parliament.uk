@@ -19,9 +19,9 @@
   "homepage": "https://github.com/ukparliament/email.parliament.uk#readme",
   "dependencies": {
     "aws-sdk": "^2.395.0",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.1",
     "connect-dynamodb": "^2.0.3",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "express-session": "^1.15.6",
     "express-validator": "^5.3.1",
     "mailchimp-api-v3": "^1.12.1",
